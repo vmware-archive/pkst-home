@@ -1,0 +1,5 @@
+#!/bin/bash
+
+if [[ ! -e ~/.config/nvim ]]; then
+  git clone git@github.com:luan/nvim ~/.config/nvim
+fi
