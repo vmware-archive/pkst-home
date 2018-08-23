@@ -3,4 +3,5 @@
 if [[ ! -e ~/.config/nvim ]]; then
   git clone git@github.com:luan/nvim ~/.config/nvim
 fi
-cp profile ~/.profile
+
+ln -sf ~/workspace/pkst-home/profile ~/.profile
