@@ -10,7 +10,9 @@ export GIT_PS1_SHOWCOLORHINTS=1
 export GIT_DUET_ROTATE_AUTHOR=1
 
 # Show our fancy prompt!
-export PROMPT_COMMAND='__git_ps1 "\e[0;31m\W\e[0m" " $ "'
+NC='\[\e[0m\]'
+BLUE='\[\e[1;34m\]'
+export PROMPT_COMMAND='__git_ps1 "$BLUE\W$NC" " \$ "'
 
 export PATH="$HOME/workspace/pkst-home/bin:$PATH"
 
