@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -euo pipefail
+
 if [[ ! -e ~/.config/nvim ]]; then
   git clone git@github.com:luan/nvim ~/.config/nvim
 fi
@@ -7,9 +9,14 @@ fi
 gem install lolcat
 
 ln -sf ~/workspace/pkst-home/profile ~/.profile
-ln -sf ~/workspace/pkst-home/tmux.conf ~/.tmux.conf
 
-if [[ ! -e ~/.tmux/plugin/tpm ]]; then
+if [[ -e ~/.config/nvim/user/plug.vim ]]; then
+  rm ~/.config/nvim/user/plug.vim
+fi
+ln -sf ~/workspace/pkst-home/plug.vim ~/.config/nvim/user/plug.vim
+
+ln -sf ~/workspace/pkst-home/tmux.conf ~/.tmux.conf
+if [[ ! -e ~/.tmux/plugins/tpm ]]; then
   mkdir -p ~/.tmux/plugins/tpm
   git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 fi
