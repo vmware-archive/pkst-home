@@ -14,6 +14,9 @@ NC='\[\e[0m\]'
 BLUE='\[\e[1;34m\]'
 export PROMPT_COMMAND='__git_ps1 "$BLUE\W$NC" " \$ "'
 
+# Enable direnv
+eval "$(direnv hook $0)"
+
 export PATH="$HOME/workspace/pkst-home/bin:$PATH"
 
 alias cat=lolcat
