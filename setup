@@ -7,3 +7,9 @@ fi
 gem install lolcat
 
 ln -sf ~/workspace/pkst-home/profile ~/.profile
+ln -sf ~/workspace/pkst-home/tmux.conf ~/.tmux.conf
+
+if [[ ! -e ~/.tmux/plugin/tpm ]]; then
+  mkdir -p ~/.tmux/plugins/tpm
+  git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+fi
