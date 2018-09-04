@@ -20,3 +20,17 @@ if [[ ! -e ~/.tmux/plugins/tpm ]]; then
   mkdir -p ~/.tmux/plugins/tpm
   git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 fi
+
+if [[ ! -e ~/workspace/git-hooks-core ]]; then
+  git clone https://github.com/pivotal-cf/git-hooks-core.git ~/workspace/git-hooks-core
+fi
+
+pushd ~/workspace/git-hooks-core > /dev/null
+  git pull
+popd
+
+os_name=$(uname | awk '{print tolower($1)}')
+curl -o cred-alert-cli \
+  "https://s3.amazonaws.com/cred-alert/cli/current-release/cred-alert-cli_${os_name}"
+chmod 755 cred-alert-cli
+mv cred-alert-cli /usr/local/bin
