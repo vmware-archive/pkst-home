@@ -1,3 +1,11 @@
+if [ -f $(brew --prefix)/etc/bash_completion.d/git-prompt.sh ]; then
+  source $(brew --prefix)/etc/bash_completion.d/git-prompt.sh
+fi
+
+if  [ -f $(brew --prefix)/etc/profile.d/z.sh ]; then
+  source $(brew --prefix)/etc/profile.d/z.sh
+fi
+
 # Show unstaged(*) and staged(+) changes
 export GIT_PS1_SHOWDIRTYSTATE=1
 # Show stashes($)

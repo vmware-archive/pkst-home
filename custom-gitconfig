@@ -1,0 +1,52 @@
+[color]
+	ui = true
+[push]
+  default=simple
+[core]
+	editor = /usr/local/bin/nvim
+  whitespace=trailing-space,space-before-tab
+  excludesfile=~/.gitignore_global
+  pager="diff-so-fancy | less --tabs=4 -RFX"
+	hooksPath = /Users/pivotal/workspace/git-hooks-core
+[alias]
+  st = status
+	di = diff
+	co = checkout
+	ci = duet-commit --verbose
+	br = branch
+	sta = stash
+	llog = log --date=local
+	flog = log --pretty=fuller --decorate
+	lg = log --graph --pretty=format:\"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset\" --abbrev-commit
+	lol = log --graph --decorate --oneline
+	lola = log --graph --decorate --oneline --all
+	blog = log origin/master... --left-right
+	ds = diff --staged
+	fixup = commit --fixup
+	squash = commit --squash
+	unstage = reset HEAD
+	rum = rebase master@{u}
+	dci = duet-commit
+	drv = duet-revert
+	sbr = git log --all --graph --decorate --oneline --simplify-by-decoration # this will show branch hierarchy, roughly
+	dmg = duet-merge
+	drb = rebase -i --exec \"git duet-commit --amend --reset-author\"
+[commit]
+	template = ~/.gitmessage
+[diff-so-fancy]
+	markEmptyLines = false
+[color "diff-highlight"]
+	oldNormal = red bold
+	oldHighlight = red bold 52
+	newNormal = green bold
+	newHighlight = green bold 22
+[color "diff"]
+	meta = 227
+	frag = magenta bold
+	commit = 227 bold
+	old = red bold
+	new = green bold
+	whitespace = red reverse
+
+[pull]
+  rebase = true

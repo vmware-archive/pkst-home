@@ -1,0 +1,10 @@
+[include]
+  path = ~/workspace/pkst-home/custom-gitconfig
+[duet "env"]
+	git-author-initials = am
+	git-author-name = Akshay Mankar
+	git-author-email = amankar@pivotal.io
+	mtime = 1534754330
+	git-committer-initials = vs
+	git-committer-name = Vlad Stoian
+	git-committer-email = vstoian@pivotal.io
