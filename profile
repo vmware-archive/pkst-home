@@ -26,5 +26,3 @@ export PROMPT_COMMAND='__git_ps1 "$BLUE\W$NC" " \$ "'
 eval "$(direnv hook $0)"
 
 export PATH="$HOME/workspace/pkst-home/bin:$PATH"
-
-alias cat=lolcat
