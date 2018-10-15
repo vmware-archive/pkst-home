@@ -1,6 +1,7 @@
 tap "homebrew/cask"
 tap "git-duet/tap"
 tap "cloudfoundry/tap"
+
 brew "git"
 brew "nvim"
 brew "direnv"
@@ -12,3 +13,5 @@ brew "bosh-cli"
 brew "credhub-cli"
 brew "bbl"
 brew "golang"
+
+cask "jetbrains-toolbox"
