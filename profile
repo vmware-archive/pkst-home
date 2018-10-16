@@ -33,8 +33,41 @@ eval "$(direnv hook $0)"
 . /usr/local/etc/bash_completion
 
 export RBENV_ROOT=$HOME/.rbenv
-export PATH="$RBENV_ROOT/bin:$HOME/workspace/pkst-home/bin:$PATH"
+export GOPATH=$HOME/src/go
+export PATH="$RBENV_ROOT/bin:$HOME/workspace/pkst-home/bin:$GOPATH/bin:$PATH"
+
+export PAGER=less
+export EDITOR=nvim
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
 
 eval "$(rbenv init -)"
+# docker-machine
+if docker-machine status | grep -q 'Running'; then
+    eval $(docker-machine env default)
+fi
+# Set tab width to 4
+tabs -4
 
-alias vim=nvim
+# setup fasd
+eval "$(fasd --init auto)"
+
+# Init fzf
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+# source all aliases
+. $HOME/.bash_aliases
+
+# Alias git to hub
+eval "$(hub alias -s)"
+
+export HISTCONTROL=ignoredups:erasedups
+# Infinite history
+# http://superuser.com/a/479727
+export HISTSIZE=""
+# export PROMPT_COMMAND="history -n; history -w; history -c; history -r; $PROMPT_COMMAND"
+
+# clear dupes in history
+hfix
+
+shopt -s histappend

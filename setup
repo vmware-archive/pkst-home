@@ -2,6 +2,9 @@
 
 set -euo pipefail
 
+# https://stackoverflow.com/questions/59895/getting-the-source-directory-of-a-bash-script-from-within
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 ln -sf ~/workspace/pkst-home/Brewfile ~/Brewfile
 brew update
 brew bundle
@@ -15,6 +18,8 @@ fi
 ln -sf ~/workspace/pkst-home/profile ~/.profile
 ln -sf ~/workspace/pkst-home/git-authors ~/.git-authors
 ln -sf ~/workspace/pkst-home/gitconfig ~/.gitconfig
+find ${DIR} -name '.*' -type f -depth 1 | grep -v .DS_Store | xargs -I % ln -sf % $HOME
+
 touch ~/.gitmessage
 
 if [[ -e ~/.config/nvim/user/plug.vim ]]; then

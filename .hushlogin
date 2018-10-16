@@ -1,0 +1,2 @@
+# The presence of this file in the home directory
+# suppresses the default OS X motd (last login at tty something something)

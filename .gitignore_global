@@ -1,0 +1,8 @@
+/.idea
+*.iml
+.DS_Store
+/vendor/bundle/
+/.bundle
+/node_modules
+.tags*
+*.swp
