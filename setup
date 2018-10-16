@@ -3,6 +3,7 @@
 set -euo pipefail
 
 ln -sf ~/workspace/pkst-home/Brewfile ~/Brewfile
+brew update
 brew bundle
 
 pip3 install neovim
