@@ -1,3 +1,7 @@
+source '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.bash.inc'
+source '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.bash.inc'
+
+
 if [ -f $(brew --prefix)/etc/bash_completion.d/git-prompt.sh ]; then
   source $(brew --prefix)/etc/bash_completion.d/git-prompt.sh
 fi
@@ -25,4 +29,12 @@ export PROMPT_COMMAND='__git_ps1 "$BLUE\W$NC" " \$ "'
 # Enable direnv
 eval "$(direnv hook $0)"
 
-export PATH="$HOME/workspace/pkst-home/bin:$PATH"
+
+. /usr/local/etc/bash_completion
+
+export RBENV_ROOT=$HOME/.rbenv
+export PATH="$RBENV_ROOT/bin:$HOME/workspace/pkst-home/bin:$PATH"
+
+eval "$(rbenv init -)"
+
+alias vim=nvim
