@@ -33,7 +33,6 @@ eval "$(direnv hook $0)"
 . /usr/local/etc/bash_completion
 
 export RBENV_ROOT=$HOME/.rbenv
-export GOPATH=$HOME/src/go
 export PATH="$RBENV_ROOT/bin:$HOME/workspace/pkst-home/bin:$GOPATH/bin:$PATH"
 
 export PAGER=less
