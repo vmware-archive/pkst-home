@@ -70,3 +70,5 @@ export HISTSIZE=""
 hfix
 
 shopt -s histappend
+alias vim=nvim
+alias vi=nvim
