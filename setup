@@ -8,6 +8,9 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ln -sf ~/workspace/pkst-home/Brewfile ~/Brewfile
 brew update
 brew bundle
+brew upgrade
+brew cask outdated --quiet | xargs -I % brew cask reinstall %
+brew cleanup
 
 pip3 install neovim
 
