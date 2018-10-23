@@ -28,7 +28,12 @@ touch ~/.gitmessage
 if [[ -e ~/.config/nvim/user/plug.vim ]]; then
   rm ~/.config/nvim/user/plug.vim
 fi
+if [[ -e ~/.config/nvim/user/after.vim ]]; then
+  rm ~/.config/nvim/user/after.vim
+fi
+
 ln -sf ~/workspace/pkst-home/plug.vim ~/.config/nvim/user/plug.vim
+ln -sf ~/workspace/pkst-home/after.vim ~/.config/nvim/user/after.vim
 
 ln -sf ~/workspace/pkst-home/tmux.conf ~/.tmux.conf
 if [[ ! -e ~/.tmux/plugins/tpm ]]; then
