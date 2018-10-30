@@ -6,6 +6,7 @@ alias cdgo="cd $GOPATH"
 alias mygo="cd $GOPATH/src/github.com/sahilm"
 alias remove_all_gems="gem uninstall -aIx"
 alias hfix='history -n && history | sort -k2 -k1nr | uniq -f1 | sort -n | cut -c8- > ~/.tmp$$ && history -c && history -r ~/.tmp$$ && history -w && rm ~/.tmp$$'
+alias realpath=grealpath
 
 # Simple fn to http serve the $PWD
 function serve() {
