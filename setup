@@ -49,12 +49,13 @@ pushd ~/workspace/git-hooks-core > /dev/null
   git pull
 popd
 
-os_name=$(uname | awk '{print tolower($1)}')
-curl -o cred-alert-cli \
-  "https://s3.amazonaws.com/cred-alert/cli/current-release/cred-alert-cli_${os_name}"
-chmod 755 cred-alert-cli
-mv cred-alert-cli /usr/local/bin
-
+if [ ! -f /usr/local/bin/cred-alert-cli ]; then
+	os_name=$(uname | awk '{print tolower($1)}')
+	curl -o cred-alert-cli \
+	"https://s3.amazonaws.com/cred-alert/cli/current-release/cred-alert-cli_${os_name}"
+	chmod 755 cred-alert-cli
+	mv cred-alert-cli /usr/local/bin
+fi
 # Get Ruby on the box
 RUBY_VERSION="2.5.1"
 if ! rbenv versions --bare | grep -q ${RUBY_VERSION}; then
@@ -72,6 +73,12 @@ gem cleanup
 if [ ! -f /usr/local/bin/kiln ]; then
   curl -SL -o /usr/local/bin/kiln https://github.com/pivotal-cf/kiln/releases/download/0.14.0/kiln-darwin
   chmod 0755 /usr/local/bin/kiln
+fi
+
+# Install om
+if [ ! -f /usr/local/bin/om ]; then
+  curl -SL -o /usr/local/bin/om https://github.com/pivotal-cf/om/releases/download/0.42.0/om-darwin
+  chmod 0755 /usr/local/bin/om
 fi
 
 ln -sf ~/workspace/pkst-home/ssh_config ~/.ssh/config
