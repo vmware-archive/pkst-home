@@ -29,7 +29,6 @@ export PROMPT_COMMAND='__git_ps1 "$BLUE\W$NC" " \$ "'
 # Enable direnv
 eval "$(direnv hook $0)"
 
-
 . /usr/local/etc/bash_completion
 
 export RBENV_ROOT=$HOME/.rbenv

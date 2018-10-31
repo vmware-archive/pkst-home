@@ -74,4 +74,7 @@ if [ ! -f /usr/local/bin/kiln ]; then
   chmod 0755 /usr/local/bin/kiln
 fi
 
+ln -sf ~/workspace/pkst-home/ssh_config ~/.ssh/config
+gcloud compute config-ssh --ssh-config-file ~/.ssh/gcloud_ssh_config
+
 echo "Setup successful!"

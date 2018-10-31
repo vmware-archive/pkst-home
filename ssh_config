@@ -1,0 +1,13 @@
+UseRoaming no
+TCPKeepAlive yes
+ServerAliveInterval 15
+ServerAliveCountMax 6
+Compression yes
+ControlMaster auto
+Include ~/.ssh/gcloud_ssh_config
+
+Host pcf.hughson.cf-app.com
+    HostName pcf.hughson.cf-app.com
+    User ubuntu
+    IdentityFile /Users/pivotal/workspace/hughson/ssh-key
+
