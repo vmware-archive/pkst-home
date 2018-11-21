@@ -33,7 +33,7 @@ eval "$(direnv hook $0)"
 
 export RBENV_ROOT=$HOME/.rbenv
 export GOPATH=$HOME/go
-export PATH="$RBENV_ROOT/bin:$HOME/workspace/pkst-home/bin:$GOPATH/bin:$PATH"
+export PATH="$HOME/.local/bin:$RBENV_ROOT/bin:$HOME/workspace/pkst-home/bin:$GOPATH/bin:$PATH"
 
 export PAGER=less
 export EDITOR=nvim
