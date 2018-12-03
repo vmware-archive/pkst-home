@@ -50,7 +50,7 @@ File.write("#{env_dir}/.envrc", envrc(client: bosh_creds[:BOSH_CLIENT],
                                       director_ip: bosh_creds[:BOSH_ENVIRONMENT],
                                       ca_cert_path: "#{env_dir}/root_ca_certificate",
                                       ssh_key_path: "#{env_dir}/ssh-key",
-                                      ops_manager_hostname: env_lock[:ops_manager_dns]))
+                                      env_lock: env_lock))
 
 
 lpass_creds_entry = "Shared-PKS Telemetry/[#{env_lock[:name]}] OpsMgr Creds"
@@ -122,8 +122,9 @@ BEGIN {
     @lpass
   end
 
-  def envrc(client:, client_secret:, director_ip:, ca_cert_path:, ssh_key_path:, ops_manager_hostname:)
-    <<~ENVRC
+  def envrc(client:, client_secret:, director_ip:, ca_cert_path:, ssh_key_path:, env_lock:)
+    ops_manager_hostname = env_lock[:ops_manager_dns]
+    bosh_vars = <<~ENVRC
       export BOSH_CLIENT=#{client}
       export BOSH_CLIENT_SECRET=#{client_secret}
       export BOSH_CA_CERT=#{ca_cert_path}
@@ -131,6 +132,8 @@ BEGIN {
       export BOSH_ALL_PROXY=ssh+socks5://ubuntu@#{ops_manager_hostname}:22?private-key=#{ssh_key_path}
       export CREDHUB_PROXY=ssh+socks5://ubuntu@#{ops_manager_hostname}:22?private-key=#{ssh_key_path}
     ENVRC
+    om_vars = om_opts(env_lock: env_lock).map { |k,v| "export #{k}=#{v}"}.join("\n")
+    [bosh_vars, om_vars].join("\n")
   end
 
   def parse_bosh_creds(bosh_json:)
@@ -155,7 +158,7 @@ BEGIN {
 
   def lastpass_lock_file_entry_cmd(env_lock:, entry:)
     <<~LPASS
-      gecho -E '#{env_lock.to_json}' | 
+      gecho -E '#{env_lock.to_json}' |
       #{lpass} add --sync=now --non-interactive --notes "#{entry}"
     LPASS
   end
