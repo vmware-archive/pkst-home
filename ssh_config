@@ -5,6 +5,7 @@ ServerAliveCountMax 6
 Compression yes
 ControlMaster auto
 Include ~/.ssh/gcloud_ssh_config
+Include ~/.ssh/config.d/*
 
 Host pcf.hughson.cf-app.com
     HostName pcf.hughson.cf-app.com

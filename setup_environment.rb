@@ -6,8 +6,8 @@ require 'optparse'
 require 'json'
 require 'pp'
 require 'open3'
-require 'mkmf'
 require 'pty'
+require 'fileutils'
 
 lock_file_url = ARGV.first
 unless lock_file_url
@@ -23,7 +23,7 @@ lastpass_login(username: lastpass_username, trust: true)
 
 env_lock = load_lock_file_from_url(url: lock_file_url)
 env_dir = "#{Dir.home}/workspace/#{env_lock[:name]}"
-run_command(cmd: "mkdir -p #{env_dir}")
+FileUtils.mkdir_p(env_dir)
 
 puts "Writing SSH key: #{env_dir}/ssh-key"
 File.write("#{env_dir}/ssh-key", env_lock[:ops_manager_private_key])
@@ -53,7 +53,6 @@ File.write("#{env_dir}/.envrc", envrc(client: bosh_creds[:BOSH_CLIENT],
 
 lpass_creds_entry = "Shared-PKS Telemetry/[#{env_lock[:name]}] OpsMgr Creds"
 puts "Creating lpass username/password entry: #{lpass_creds_entry}"
-cred, _, _ = run_command(cmd: "#{lpass} ls --sync=now '#{lpass_creds_entry}'")
 if already_in_lpass?(entry: lpass_creds_entry)
   puts "#{lpass_creds_entry} already exists. Skipping..."
 else
@@ -67,6 +66,14 @@ if already_in_lpass?(entry: lpass_lock_file_entry)
 else
   run_command(cmd: lastpass_lock_file_entry_cmd(env_lock: env_lock, entry: lpass_lock_file_entry))
 end
+
+ssh_config_path = "#{Dir.home}/.ssh/config.d/#{env_lock[:name]}"
+puts "Writing ssh config at: #{ssh_config_path}"
+FileUtils.mkdir_p("#{Dir.home}/.ssh/config.d/")
+
+File.write(ssh_config_path, ssh_config_directive(env_name: env_lock[:name],
+                                                 opsmanager_dns: env_lock[:ops_manager_dns],
+                                                 ssh_key_path: "#{env_dir}/ssh-key"))
 
 BEGIN {
 
@@ -98,16 +105,16 @@ BEGIN {
   end
 
   def om
-    @om ||= find_executable 'om'
-    unless @om
-      fail "cannot find om on path"
+    @om ||= `which om`.chomp
+    if @om.empty?
+      fail 'cannot find om on path'
     end
     @om
   end
 
   def lpass
-    @lpass ||= find_executable 'lpass'
-    unless @lpass
+    @lpass ||= `which lpass`.chomp
+    if @lpass.empty?
       fail "cannot find lpass on path"
     end
     @lpass
@@ -172,5 +179,14 @@ BEGIN {
     end
   ensure
     Signal.trap(:INT, nil)
+  end
+
+  def ssh_config_directive(env_name:, opsmanager_dns:, ssh_key_path:)
+    <<~SSH
+      Host #{env_name} #{opsmanager_dns}
+        HostName #{opsmanager_dns}
+        User ubuntu
+        IdentityFile #{ssh_key_path}
+    SSH
   end
 }
