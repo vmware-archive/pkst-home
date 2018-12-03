@@ -19,7 +19,9 @@ unless lastpass_username
   fail 'Must supply lastpass username'
 end
 
-lastpass_login(username: lastpass_username, trust: true)
+unless logged_into_lastpass?
+  lastpass_login(username: lastpass_username, trust: true)
+end
 
 env_lock = load_lock_file_from_url(url: lock_file_url)
 env_dir = "#{Dir.home}/workspace/#{env_lock[:name]}"
@@ -160,6 +162,11 @@ BEGIN {
 
   def squish(str)
     str.gsub(/\A[[:space:]]+/, '').gsub(/[[:space:]]+\z/, '').gsub(/[[:space:]]+/, ' ')
+  end
+
+  def logged_into_lastpass?()
+    _, _, status = Open3.capture3("#{lpass} sync")
+    status.success?
   end
 
   def lastpass_login(username:, trust: false)
