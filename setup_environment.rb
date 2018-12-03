@@ -19,7 +19,7 @@ unless lastpass_username
   fail 'Must supply lastpass username'
 end
 
-lastpass_login(lastpass_username)
+lastpass_login(username: lastpass_username, trust: true)
 
 env_lock = load_lock_file_from_url(url: lock_file_url)
 env_dir = "#{Dir.home}/workspace/#{env_lock[:name]}"
@@ -54,13 +54,27 @@ File.write("#{env_dir}/.envrc", envrc(client: bosh_creds[:BOSH_CLIENT],
 lpass_creds_entry = "Shared-PKS Telemetry/[#{env_lock[:name]}] OpsMgr Creds"
 puts "Creating lpass username/password entry: #{lpass_creds_entry}"
 cred, _, _ = run_command(cmd: "#{lpass} ls --sync=now '#{lpass_creds_entry}'")
-if cred.empty?
-  run_command(cmd: lastpass_creds_entry_cmd(env_lock: env_lock, entry: lpass_creds_entry))
-else
+if already_in_lpass?(entry: lpass_creds_entry)
   puts "#{lpass_creds_entry} already exists. Skipping..."
+else
+  run_command(cmd: lastpass_creds_entry_cmd(env_lock: env_lock, entry: lpass_creds_entry))
+end
+
+lpass_lock_file_entry = "Shared-PKS Telemetry/[#{env_lock[:name]}] opsmgr-lock-file.json"
+puts "Creating lpass lock file entry: #{lpass_lock_file_entry}"
+if already_in_lpass?(entry: lpass_lock_file_entry)
+  puts "#{lpass_lock_file_entry} already exists. Skipping..."
+else
+  run_command(cmd: lastpass_lock_file_entry_cmd(env_lock: env_lock, entry: lpass_lock_file_entry))
 end
 
 BEGIN {
+
+  def already_in_lpass?(entry:)
+    stdout, _, _ = run_command(cmd: "#{lpass} ls --sync=now '#{entry}'")
+    !stdout.empty?
+  end
+
   def load_lock_file_from_url(url:)
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port)
@@ -124,22 +138,32 @@ BEGIN {
   end
 
   def lastpass_creds_entry_cmd(env_lock:, entry:)
-    cmd = <<~LPASS
+    <<~LPASS
       printf "Username: #{env_lock[:ops_manager][:username]}\nPassword: #{env_lock[:ops_manager][:password]}\nURL: #{env_lock[:ops_manager][:url]}" |
       #{lpass} add --sync=now --non-interactive "#{entry}"
     LPASS
-    cmd
+  end
+
+  def lastpass_lock_file_entry_cmd(env_lock:, entry:)
+    <<~LPASS
+      gecho -E '#{env_lock.to_json}' | 
+      #{lpass} add --sync=now --non-interactive --notes "#{entry}"
+    LPASS
   end
 
   def squish(str)
     str.gsub(/\A[[:space:]]+/, '').gsub(/[[:space:]]+\z/, '').gsub(/[[:space:]]+/, ' ')
   end
 
-  def lastpass_login(lastpass_username)
+  def lastpass_login(username:, trust: false)
     PTY.open
     puts "Logging into LastPass"
     pid = fork do
-      exec("#{lpass} login #{lastpass_username}")
+      if trust
+        exec("#{lpass} login --trust #{username}")
+      else
+        exec("#{lpass} login #{username}")
+      end
     end
     Signal.trap(:INT) {}
     _, status = Process.waitpid2(pid)
