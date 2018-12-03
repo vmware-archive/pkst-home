@@ -84,9 +84,10 @@ om_opts = {
 }
 
 puts "Fetching root ca cert from ops manager: #{env_lock[:ops_manager][:url]}"
-ca_cert, _, _ = run_command("#{om} -k curl --path /api/v0/security/root_ca_certificate", om_opts)
+ca_cert_json, _, _ = run_command("#{om} -k curl --path /api/v0/security/root_ca_certificate", om_opts)
+ca_cert = JSON.parse(ca_cert_json, symbolize_names: true)
 puts "Writing CA cert: #{env_dir}/root_ca_certificate"
-File.write("#{env_dir}/root_ca_certificate", ca_cert)
+File.write("#{env_dir}/root_ca_certificate", ca_cert[:root_ca_certificate_pem])
 
 puts "Fetching BOSH credentials from ops manager"
 bosh_creds_json, _, _ = run_command("#{om} -k curl --path /api/v0/deployed/director/credentials/bosh_commandline_credentials", om_opts)
@@ -100,4 +101,3 @@ File.write("#{env_dir}/.envrc", envrc(client: bosh_creds[:BOSH_CLIENT],
                                       ca_cert_path: "#{env_dir}/root_ca_certificate",
                                       ssh_key_path: "#{env_dir}/ssh-key",
                                       ops_manager_hostname: env_lock[:ops_manager_dns]))
-
