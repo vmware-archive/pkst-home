@@ -20,7 +20,7 @@ unless lastpass_username
 end
 
 unless logged_into_lastpass?
-  lastpass_login(username: lastpass_username, trust: true)
+  lastpass_login(username: lastpass_username)
 end
 
 env_lock = load_lock_file_from_url(url: lock_file_url)
@@ -76,11 +76,11 @@ FileUtils.mkdir_p("#{Dir.home}/.ssh/config.d/")
 File.write(ssh_config_path, ssh_config_directive(env_name: env_lock[:name],
                                                  opsmanager_dns: env_lock[:ops_manager_dns],
                                                  ssh_key_path: "#{env_dir}/ssh-key"))
-
+run_command(cmd: 'lpass sync now')
 BEGIN {
 
   def already_in_lpass?(entry:)
-    stdout, _, _ = run_command(cmd: "#{lpass} ls --sync=now '#{entry}'")
+    stdout, _, _ = run_command(cmd: "#{lpass} ls '#{entry}'")
     !stdout.empty?
   end
 
@@ -152,14 +152,14 @@ BEGIN {
   def lastpass_creds_entry_cmd(env_lock:, entry:)
     <<~LPASS
       printf "Username: #{env_lock[:ops_manager][:username]}\nPassword: #{env_lock[:ops_manager][:password]}\nURL: #{env_lock[:ops_manager][:url]}" |
-      #{lpass} add --sync=now --non-interactive "#{entry}"
+      #{lpass} add --non-interactive "#{entry}"
     LPASS
   end
 
   def lastpass_lock_file_entry_cmd(env_lock:, entry:)
     <<~LPASS
       gecho -E '#{env_lock.to_json}' |
-      #{lpass} add --sync=now --non-interactive --notes "#{entry}"
+      #{lpass} add --non-interactive --notes "#{entry}"
     LPASS
   end
 
