@@ -9,20 +9,22 @@ require 'open3'
 require 'pty'
 require 'fileutils'
 
-lock_file_url = ARGV.first
+lock_file_url = ARGV[0]
 unless lock_file_url
   fail 'Must supply the URL to the lock file'
 end
 
-lastpass_username = ARGV.last
+lastpass_username = ARGV[1]
 unless lastpass_username
   fail 'Must supply lastpass username'
 end
 
 unless logged_into_lastpass?
+  puts "Loggin into lastpass"
   lastpass_login(username: lastpass_username)
 end
 
+puts "Loading lock file from url"
 env_lock = load_lock_file_from_url(url: lock_file_url)
 env_dir = "#{Dir.home}/workspace/#{env_lock[:name]}"
 FileUtils.mkdir_p(env_dir)
