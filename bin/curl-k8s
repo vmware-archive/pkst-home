@@ -1,0 +1,18 @@
+#!/usr/bin/env sh
+
+set -euo pipefail
+
+if [[ $# -lt 2 ]] ; then
+    echo "usage: $0 cluster-name url-path"
+    exit 0
+fi
+
+cluster_name="$1"
+url_path="$2"
+
+server_address="$(bosh int --path /clusters/name="$cluster_name"/cluster/server ~/.kube/config)"
+user_guid="$(bosh int --path /contexts/name="$cluster_name"/context/user ~/.kube/config)"
+token="$(bosh int --path /users/name="$user_guid"/user/token ~/.kube/config)"
+
+
+curl -k "$server_address$url_path" --header "Authorization: Bearer $token"
