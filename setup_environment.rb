@@ -20,7 +20,7 @@ unless lastpass_username
 end
 
 unless logged_into_lastpass?
-  puts "Loggin into lastpass"
+  puts "Logging into lastpass"
   lastpass_login(username: lastpass_username)
 end
 
