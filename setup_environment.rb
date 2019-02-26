@@ -8,6 +8,7 @@ require 'pp'
 require 'open3'
 require 'pty'
 require 'fileutils'
+require 'yaml'
 
 lock_file_url = ARGV[0]
 unless lock_file_url
@@ -36,6 +37,7 @@ File.chmod(0600, "#{env_dir}/ssh-key")
 puts "Fetching root ca cert from ops manager: #{env_lock[:ops_manager][:url]}"
 ca_cert_json, _, _ = run_command(cmd: "#{om} -k curl --path /api/v0/security/root_ca_certificate",
                                  env: om_opts(env_lock: env_lock))
+
 ca_cert = JSON.parse(ca_cert_json, symbolize_names: true)
 puts "Writing CA cert: #{env_dir}/root_ca_certificate"
 File.write("#{env_dir}/root_ca_certificate", ca_cert[:root_ca_certificate_pem])
@@ -54,6 +56,36 @@ File.write("#{env_dir}/.envrc", envrc(client: bosh_creds[:BOSH_CLIENT],
                                       ssh_key_path: "#{env_dir}/ssh-key",
                                       env_lock: env_lock))
 
+
+target_network_name = "#{env_lock[:name]}-services-subnet"
+
+pipeline_vars = {
+    'director_name' => env_lock[:name],
+    'network_name' => target_network_name,
+    'jumpbox_url' => "#{env_lock[:ops_manager_dns]}:22",
+    # hardcoded password is OK. Only used in test environments.
+    'mysql_pks_billing_db_password' => 'Zns0tZ3vRHhJYdO8ANZSIJEfchjsAU',
+    'bosh_client' => bosh_creds[:BOSH_CLIENT],
+    'bosh_client_secret' => bosh_creds[:BOSH_CLIENT_SECRET],
+    'credhub_secret' => bosh_creds[:BOSH_CLIENT_SECRET],
+    'bosh_ca_cert' => ca_cert[:root_ca_certificate_pem],
+    'opsmgr_private_key' => env_lock[:ops_manager_private_key]
+}
+
+
+puts 'Fetching networks from Ops Manager'
+networks_list_json, _, _ = run_command(cmd: "#{om} -k curl --path /api/v0/staged/director/networks",
+                                       env: om_opts(env_lock: env_lock))
+networks_list = JSON.parse(networks_list_json, symbolize_names: true)[:networks]
+services_subnet = networks_list.find { |n| n[:name] == target_network_name }
+pipeline_vars['azs'] = services_subnet[:subnets].first[:availability_zone_names]
+
+
+telemetry_test_certs = YAML.load_file(File.join(__dir__, 'telemetry-test-certs.yml'))
+pipeline_vars['telemetry_tls'] = telemetry_test_certs
+
+puts 'Writing pipeline-vars.yml'
+File.write("#{env_dir}/pipeline-vars.yml", YAML.dump(pipeline_vars))
 
 lpass_creds_entry = "Shared-PKS Telemetry/[#{env_lock[:name]}] OpsMgr Creds"
 puts "Creating lpass username/password entry: #{lpass_creds_entry}"
@@ -79,6 +111,8 @@ File.write(ssh_config_path, ssh_config_directive(env_name: env_lock[:name],
                                                  opsmanager_dns: env_lock[:ops_manager_dns],
                                                  ssh_key_path: "#{env_dir}/ssh-key"))
 run_command(cmd: 'lpass sync now')
+
+
 BEGIN {
 
   def already_in_lpass?(entry:)
@@ -134,13 +168,13 @@ BEGIN {
       export BOSH_ALL_PROXY=ssh+socks5://ubuntu@#{ops_manager_hostname}:22?private-key=#{ssh_key_path}
       export CREDHUB_PROXY=ssh+socks5://ubuntu@#{ops_manager_hostname}:22?private-key=#{ssh_key_path}
     ENVRC
-    om_vars = om_opts(env_lock: env_lock).map { |k,v| "export #{k}=#{v}"}.join("\n")
+    om_vars = om_opts(env_lock: env_lock).map { |k, v| "export #{k}=#{v}" }.join("\n")
     [bosh_vars, om_vars].join("\n")
   end
 
   def parse_bosh_creds(bosh_json:)
     s = JSON.parse(bosh_json, symbolize_names: true)[:credential]
-    s.split.map {|i| i.split('=')}.inject({}) {|memo, cred| memo[cred.first.to_sym] = cred.last; memo}
+    s.split.map { |i| i.split('=') }.inject({}) { |memo, cred| memo[cred.first.to_sym] = cred.last; memo }
   end
 
   def om_opts(env_lock:)
@@ -169,7 +203,7 @@ BEGIN {
     str.gsub(/\A[[:space:]]+/, '').gsub(/[[:space:]]+\z/, '').gsub(/[[:space:]]+/, ' ')
   end
 
-  def logged_into_lastpass?()
+  def logged_into_lastpass?
     _, _, status = Open3.capture3("#{lpass} sync")
     status.success?
   end
@@ -202,3 +236,5 @@ BEGIN {
     SSH
   end
 }
+
+
