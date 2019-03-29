@@ -1,6 +1,6 @@
 # pkst-home
 
-Home for the PKS Telementry team.
+Home for the PKS Telementry team.  pks-telemetry@pivotal.io  or find us on slack at #pks-telemetry-eng
 
 ## Set up workstation
 
