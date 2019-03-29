@@ -10,23 +10,58 @@ require 'pty'
 require 'fileutils'
 require 'yaml'
 
-lock_file_url = ARGV[0]
-unless lock_file_url
-  fail 'Must supply the URL to the lock file'
+options = {}
+
+opt_parser = OptionParser.new do |opt|
+  opt.banner = "Usage: setup_environment.rb [OPTIONS]"
+
+  opt.on("-u", "--username USERNAME", String, "Lastpass username containing a shared telemetry folder") do |username|
+    options[:username] = username
+  end
+
+  opt.on("-e", "--environment environment", String, "The environment you want to setup") do |environment|
+    options[:environment] = environment
+  end
+
+  opt.on("-i", "--url local-file-url", "the url of the environment lock file") do |url|
+    options[:url] = url
+  end
+
+  opt.on("-h","--help","help") do
+    puts opt_parser
+    exit
+  end
 end
 
-lastpass_username = ARGV[1]
-unless lastpass_username
-  fail 'Must supply lastpass username'
+opt_parser.parse(ARGV)
+
+if !options[:environment] && !options[:url]
+  puts "error: Must supply either the environment or the url to the lock file"
+  puts opt_parser
+  exit 1
 end
+
+if !options[:username]
+  puts "error: Must supply the lastpass username"
+  puts opt_parser
+  exit 1
+end
+
+lastpass_username = options[:username]
 
 unless logged_into_lastpass?
   puts "Logging into lastpass"
   lastpass_login(username: lastpass_username)
 end
 
-puts "Loading lock file from url"
-env_lock = load_lock_file_from_url(url: lock_file_url)
+if options[:environment]
+  puts "Getting lock file from Last Pass"
+  env_lock = load_lock_file_from_lastpass(name: options[:environment])
+else
+  puts "Loading lock file from url"
+  env_lock = load_lock_file_from_url(url: options[:url])
+end
+
 env_dir = "#{Dir.home}/workspace/#{env_lock[:name]}"
 FileUtils.mkdir_p(env_dir)
 
@@ -131,6 +166,12 @@ BEGIN {
       fail " got error from #{url}. response code: #{response.code}. response: #{response.body}"
     end
     JSON.parse(response.body, symbolize_names: true)
+  end
+
+  def load_lock_file_from_lastpass(name:)
+    cmd_string = "lpass show \"Shared-PKS Telemetry/[#{name}] opsmgr-lock-file.json\" --notes"
+    lock_file_json, _, _ = run_command(cmd: cmd_string)
+    JSON.parse(lock_file_json, symbolize_names: true)
   end
 
   def run_command(cmd:, env: {})
