@@ -2,14 +2,20 @@
 
 Home for the PKS Telementry team.
 
-## Usage
+## Set up workstation
 
-To set up workstation environment, run `setup`
+To set up workstation tools and configurations, run `setup`
 ```
 > ./setup
 ```
+### Decisions made
 
-To set up `opman environment`, run `.setup_environment`
+1. [neovim](https://github.com/neovim/neovim) is the only vim we know
+1. [lolcat](https://github.com/busyloop/lolcat) is the only cat we know
+
+## Set up environment
+To set up environment variables for running `opsman` and `concourse` for Telemetry specific clusters, run `.setup_environment`
+
 ```
 > ./setup_environment.rb -h
 Usage: setup_environment.rb [OPTIONS]
@@ -19,8 +25,8 @@ Usage: setup_environment.rb [OPTIONS]
     -h, --help                       help
 ```
 
+This will create a folder named `<environment-name>` in the `workspace` directory of your home. Inside that directory, you have the necessary environment already setup to run commands such as `bosh vms`.
 
-## Decisions made
 
-1. [neovim](https://github.com/neovim/neovim) is the only vim we know
-1. [lolcat](https://github.com/busyloop/lolcat) is the only cat we know
+
+
