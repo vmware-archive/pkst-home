@@ -1,0 +1,6 @@
+[git-together]
+	domain = pivotal.io
+[git-together "authors"]
+  vs="Vlad Stoian; vstoian"
+  fy="Fei Yang; fyang"
+  ls="Laura Squire; brinduc@gmail.com"

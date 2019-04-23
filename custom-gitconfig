@@ -12,7 +12,7 @@
   st = status
 	di = diff
 	co = checkout
-	ci = duet-commit --verbose
+	ci = commit --verbose
 	br = branch
 	sta = stash
 	llog = log --date=local
@@ -26,13 +26,6 @@
 	squash = commit --squash
 	unstage = reset HEAD
 	rum = rebase master@{u}
-	dci = duet-commit
-	drv = duet-revert
-	sbr = git log --all --graph --decorate --oneline --simplify-by-decoration # this will show branch hierarchy, roughly
-	dmg = duet-merge
-	drb = rebase -i --exec \"git duet-commit --amend --reset-author\"
-[commit]
-	template = ~/.gitmessage
 [diff-so-fancy]
 	markEmptyLines = false
 [color "diff-highlight"]
