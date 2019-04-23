@@ -1,14 +1,13 @@
 # Setup fzf
 # ---------
-if [[ ! "$PATH" == */Users/pivotal/.fzf/bin* ]]; then
-  export PATH="$PATH:/Users/pivotal/.fzf/bin"
+if [[ ! "$PATH" == */Users/${USER}/.fzf/bin* ]]; then
+  export PATH="${PATH:+${PATH}:}/Users/${USER}/.fzf/bin"
 fi
 
 # Auto-completion
 # ---------------
-[[ $- == *i* ]] && source "/Users/pivotal/.fzf/shell/completion.bash" 2> /dev/null
+[[ $- == *i* ]] && source "/Users/${USER}/.fzf/shell/completion.bash" 2> /dev/null
 
 # Key bindings
 # ------------
-source "/Users/pivotal/.fzf/shell/key-bindings.bash"
-
+source "/Users/${USER}/.fzf/shell/key-bindings.bash"

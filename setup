@@ -25,6 +25,7 @@ find ${DIR} -name '.*' -type f -depth 1 | grep -v .DS_Store | xargs -I % ln -sf 
 
 touch ~/.gitmessage
 
+mkdir -p ~/.config/nvim/user
 if [[ -e ~/.config/nvim/user/plug.vim ]]; then
   rm ~/.config/nvim/user/plug.vim
 fi
@@ -56,9 +57,10 @@ if [ ! -f /usr/local/bin/cred-alert-cli ]; then
 	chmod 755 cred-alert-cli
 	mv cred-alert-cli /usr/local/bin
 fi
+
 # Get Ruby on the box
 RUBY_VERSION="2.5.1"
-if ! rbenv versions --bare | grep -q ${RUBY_VERSION}; then
+if ! rbenv versions --bare | grep ${RUBY_VERSION} > /dev/null ; then
     rbenv install ${RUBY_VERSION} --keep
 fi
 
