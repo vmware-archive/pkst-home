@@ -26,6 +26,7 @@
 	squash = commit --squash
 	unstage = reset HEAD
 	rum = rebase master@{u}
+  pushfwl = push --force-with-lease
 [diff-so-fancy]
 	markEmptyLines = false
 [color "diff-highlight"]
