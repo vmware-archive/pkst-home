@@ -20,6 +20,7 @@ fi
 
 ln -sf ~/workspace/pkst-home/profile ~/.profile
 ln -sf ~/workspace/pkst-home/git-authors ~/.git-authors
+ln -sf ~/workspace/pkst-home/git-together ~/.git-together
 ln -sf ~/workspace/pkst-home/gitconfig ~/.gitconfig
 find ${DIR} -name '.*' -type f -depth 1 | grep -v .DS_Store | xargs -I % ln -sf % $HOME
 
