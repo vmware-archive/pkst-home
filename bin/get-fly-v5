@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+wget https://github.com/concourse/concourse/releases/download/v5.4.0/fly-5.4.0-darwin-amd64.tgz -O /tmp/fly-v5.tgz
+tar xzvf /tmp/fly-v5.tgz -C /tmp
+mv /tmp/fly /usr/local/bin/fly
+
+chmod +x /usr/local/bin/fly
