@@ -66,7 +66,7 @@ gem cleanup
 
 # Install kiln
 if [ ! -f /usr/local/bin/kiln ]; then
-  curl -SL -o /usr/local/bin/kiln https://github.com/pivotal-cf/kiln/releases/download/0.14.0/kiln-darwin
+  curl -SL -o /usr/local/bin/kiln https://github.com/pivotal-cf/kiln/releases/download/0.21.0/kiln-darwin
   chmod 0755 /usr/local/bin/kiln
 fi
 
