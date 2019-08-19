@@ -1,0 +1,15 @@
+#!/bin/bash -eu
+function clone_repos() {
+  echo "Cloning commonly used repos..."
+  local pivotal_cf_dir="${HOME}/workspace"
+  repos=(p-pks-integrations pks-api-release pks-locks pks-releng-ci raas-secrets pks-telemetry-release vac-csv-importer csv-exporter)
+
+  for repo in ${repos[@]}; do
+    echo -e "\ncloning $repo..."
+    if [ ! -d "${pivotal_cf_dir}/${repo}" ]; then
+    	git clone git@github.com:pivotal-cf/"${repo}".git "${pivotal_cf_dir}/${repo}"
+    fi
+  done
+}
+
+clone_repos

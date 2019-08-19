@@ -15,7 +15,7 @@ brew cleanup
 pip3 install neovim
 
 if [[ ! -e ~/.config/nvim ]]; then
-  git clone git@github.com:luan/nvim ~/.config/nvim
+  git clone https://github.com/luan/nvim.git ~/.config/nvim
 fi
 
 ln -sf ~/workspace/pkst-home/profile ~/.profile
@@ -86,5 +86,7 @@ fi
 
 ln -sf ~/workspace/pkst-home/ssh_config ~/.ssh/config
 gcloud compute config-ssh --ssh-config-file ~/.ssh/gcloud_ssh_config
+
+source ${DIR}/bin/clone_repo
 
 echo "Setup successful!"
