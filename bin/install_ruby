@@ -1,0 +1,10 @@
+#!/bin/bash -eu
+ruby-install ruby 2.6.1 --no-reinstall
+if [[ ! -f "${HOME}"/.ruby-version ]]; then
+    echo '2.6.1' >> "${HOME}"/.ruby-version
+fi
+ruby-install ruby 2.4.2 --no-reinstall
+ruby-install ruby 2.5.1 --no-reinstall
+chruby ruby 2.6.1
+
+gem install cf-uaac
