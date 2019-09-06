@@ -1,0 +1,64 @@
+---
+resource_types:
+- name: cron-resource
+  type: docker-image
+  source:
+    repository: cftoolsmiths/cron-resource
+
+- name: slack-notification
+  type: docker-image
+  source:
+    repository: cfcommunity/slack-notification-resource
+
+resources:
+- name: notify
+  type: slack-notification
+  source:
+    url: ((slack-webhook))
+
+- name: daily-trigger-at-16-20-UTC
+  type: cron-resource
+  source:
+    expression: "20 16 * * *"
+
+- name: git-pkst-home
+  type: git
+  source:
+    uri: git@github.com:pivotal-cf/pkst-home.git
+    branch: master
+    private_key: ((github-private-key))
+
+jobs:
+- name: toolsmiths-environment-renewal
+  plan:
+  - get: daily-trigger-at-16-20-UTC
+    trigger: true
+  - get: git-pkst-home
+  - task: renew
+    privileged: true
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: ubuntu
+          tag: latest
+      inputs:
+        - name: git-pkst-home
+      outputs:
+        - name: renewal
+      run:
+        path: git-pkst-home/renew_env/renew.sh
+        args: []
+      params:
+        TOOLSMITHS_API_KEY: ((toolsmiths-api-key))
+  - put: notify
+    params:
+      text: Toolsmiths Environments Renewed! YAY!
+  on_failure:
+    do:
+      - put: notify
+        params:
+          attachments:
+          - color: danger
+            text: $BUILD_PIPELINE_NAME/$BUILD_JOB_NAME build failed. See results at <https://ci.vcna.io/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME>
