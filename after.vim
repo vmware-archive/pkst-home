@@ -15,3 +15,4 @@ let g:ale_fixers = { 'haskell' : ['stylish-haskell'] }
 nmap \ :NERDTreeToggle<CR>
 nmap \| :NERDTreeFind<CR>
 autocmd filetype crontab setlocal nobackup nowritebackup
+set clipboard=unnamed
