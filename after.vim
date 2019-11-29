@@ -11,6 +11,9 @@
 
 let g:ale_linters.haskell = ['hie', 'stack-build', 'hlint']
 let g:ale_fixers = { 'haskell' : ['stylish-haskell'] }
+let g:move_key_modifier = 'C'
+
+set relativenumber
 
 nmap \ :NERDTreeToggle<CR>
 nmap \| :NERDTreeFind<CR>
