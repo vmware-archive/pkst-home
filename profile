@@ -20,11 +20,11 @@ export GIT_PS1_SHOWUNTRACKEDFILES=1
 export GIT_PS1_SHOWCOLORHINTS=1
 # Rotate git duet author
 export GIT_DUET_ROTATE_AUTHOR=1
-
-# Show our fancy prompt!
-NC='\[\e[0m\]'
-BLUE='\[\e[1;34m\]'
-export PROMPT_COMMAND='__git_ps1 "$BLUE\W$NC" " \$ "'
+# Set git author to be repo only
+export GIT_AUTHOR_LOCAL=1
+# Add the below line to your .bashrc to disable the
+# `--signoff`s added by `git-together commit`.
+export GIT_TOGETHER_NO_SIGNOFF=1
 
 # Enable direnv
 eval "$(direnv hook $0)"
