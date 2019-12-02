@@ -6,4 +6,9 @@
 # arrow down
 "\e[B":history-search-forward
 
+"\e\e[D": backward-word
+"\e\e[C": forward-word
+
+"\e\e-H": shell-backward-kill-word
+
 set completion-ignore-case On

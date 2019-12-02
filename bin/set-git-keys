@@ -11,6 +11,11 @@ if [ -z $HOURS ]; then
   echo "Hours: $HOURS"
 fi
 
+if [ "$HOURS" -le 0 ]; then
+  echo "It's past 5 pm. Go home! :P"
+  exit 1
+fi
+
 if [ -n "$LASTPASSEMAIL" ]; then
   if [[ `lpass status` != *"$LASTPASSEMAIL"* ]]; then
     lpass login $LASTPASSEMAIL
