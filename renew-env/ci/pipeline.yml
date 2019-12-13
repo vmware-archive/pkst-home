@@ -54,12 +54,13 @@ jobs:
       params:
         TOOLSMITHS_API_KEY: ((toolsmiths-api-key))
   - put: notify
-    text_file: renewal/env.log
-    text: |
-      :smile: Toolsmiths Environments Renewed:
-      ```
-      $TEXT_FILE_CONTEXT
-      ```
+    params:
+      text_file: renewal/env.log
+      text: |
+        :smile: Toolsmiths Environments Renewed:
+        ```
+        $TEXT_FILE_CONTEXT
+        ```
   on_failure:
     do:
       - put: notify
