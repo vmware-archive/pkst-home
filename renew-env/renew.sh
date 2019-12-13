@@ -8,21 +8,20 @@ set -euo pipefail
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")"; pwd)"
 
 api_url="https://environments.toolsmiths.cf-app.com"
-api_gcp_endpoint="/v1/custom_gcp/pks"
+api_gcp_endpoint="v1/custom_gcp/pks"
+api_vsphere_endpoint="v1/custom_vsphere/pks"
 
-function main() {
-  echo -e "Starting Toolsmiths Environment Renewal at $(date)"
 
-  cleanup
-  setup
+function renew() {
 
-  env_names=$(curl -s "${api_url}${api_gcp_endpoint}/list?api_token=${TOOLSMITHS_API_KEY}" | jq .[].name -r)
+  endpoint=$1
+  env_names=$(curl -s "${api_url}/${endpoint}/list?api_token=${TOOLSMITHS_API_KEY}" | jq .[].name -r)
 
   for env in ${env_names}; do
 
     echo -e "\nRenewing environment [${env}]"
 
-    response=$(curl -s "${api_url}${api_gcp_endpoint}/renew" \
+    response=$(curl -s "${api_url}/${endpoint}/renew" \
                     -H "Content-Type: application/json" \
                     -d "{ \
                           \"api_token\": \"${TOOLSMITHS_API_KEY}\", \
@@ -48,6 +47,16 @@ function setup() {
 
 function cleanup() {
   rm -rf ${script_dir}/tmp || 0
+}
+
+function main() {
+  echo -e "Starting Toolsmiths Environment Renewal at $(date)"
+
+  cleanup
+  setup
+
+  renew ${api_gcp_endpoint}
+  renew ${api_vsphere_endpoint}
 }
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
