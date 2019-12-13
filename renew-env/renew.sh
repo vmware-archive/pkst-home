@@ -6,11 +6,11 @@
 set -euo pipefail
 
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")"; pwd)"
+renewal_dir=${script_dir}/renewal
 
 api_url="https://environments.toolsmiths.cf-app.com"
 api_gcp_endpoint="v1/custom_gcp/pks"
 api_vsphere_endpoint="v1/custom_vsphere/pks"
-
 
 function renew() {
 
@@ -29,7 +29,7 @@ function renew() {
                         }")
 
     if [ $? == 0 ]; then
-      echo "$(echo $response | jq .message -r)"
+      echo "$(echo $response | jq .message -r)" | tee -a ${renewal_dir}/env.log
     else
       echo "Failed to renew environment [${env}]"
     fi
@@ -43,6 +43,7 @@ function renew() {
 function setup() {
   : ${TOOLSMITHS_API_KEY:?"Toolsmiths API key must be provided"}
   mkdir -p ${script_dir}/tmp
+  mkdir -p ${renewal_dir}
 }
 
 function cleanup() {
