@@ -59,7 +59,7 @@ jobs:
       text: |
         :smile: Toolsmiths Environments Renewed:
         ```
-        $TEXT_FILE_CONTEXT
+        $TEXT_FILE_CONTENT
         ```
   on_failure:
     do:
