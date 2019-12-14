@@ -64,4 +64,4 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   main "$@"
 fi
 
-exit -1
+exit 0
