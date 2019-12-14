@@ -43,7 +43,7 @@ function renew() {
 function setup() {
   : ${TOOLSMITHS_API_KEY:?"Toolsmiths API key must be provided"}
   mkdir -p ${script_dir}/tmp
-  mkdir -p ${PWD}/${output_dir}
+  touch ${output_dir}/env.log
 }
 
 function cleanup() {
@@ -64,4 +64,4 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   main "$@"
 fi
 
-exit 0
+exit -1
