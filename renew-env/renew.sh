@@ -29,7 +29,7 @@ function renew() {
                         }")
 
     if [ $? == 0 ]; then
-      echo "$(echo $response | jq .message -r)" | tee -a ${output_dir}/env.log
+      echo "$(echo $response | jq .message -r)" | tee -a ${PWD}/${output_dir}/env.log
     else
       echo "Failed to renew environment [${env}]"
     fi
@@ -43,7 +43,7 @@ function renew() {
 function setup() {
   : ${TOOLSMITHS_API_KEY:?"Toolsmiths API key must be provided"}
   mkdir -p ${script_dir}/tmp
-  touch ${output_dir}/env.log
+  mkdir -p ${PWD}/${output_dir}
 }
 
 function cleanup() {
