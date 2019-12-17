@@ -31,16 +31,14 @@ eval "$(direnv hook $0)"
 
 . /usr/local/etc/bash_completion
 
-export RBENV_ROOT=$HOME/.rbenv
 export GOPATH=$HOME/go
-export PATH="$HOME/.local/bin:$RBENV_ROOT/bin:$HOME/workspace/pkst-home/bin:$GOPATH/bin:$PATH"
+export PATH="$HOME/.local/bin:$HOME/workspace/pkst-home/bin:$GOPATH/bin:$PATH"
 
 export PAGER=less
 export EDITOR=nvim
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
-eval "$(rbenv init -)"
 # docker-machine
 if docker-machine status | grep -q 'Running'; then
     eval $(docker-machine env default)
