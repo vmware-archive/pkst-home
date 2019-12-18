@@ -90,9 +90,12 @@ File.write("#{env_dir}/.envrc", envrc(client: bosh_creds[:BOSH_CLIENT],
                                       ca_cert_path: "#{env_dir}/root_ca_certificate",
                                       ssh_key_path: "#{env_dir}/ssh-key",
                                       env_lock: env_lock))
-
-
-target_network_name = "#{env_lock[:name]}-services-subnet"
+iaas_type = env_lock[:iaas_type]
+if iaas_type == "vsphere"
+  target_network_name = "default"
+elsif iaas_type == "gcp"
+  target_network_name = "#{env_lock[:name]}-services-subnet"
+end
 
 pipeline_vars = {
     'director_name' => env_lock[:name],
