@@ -30,3 +30,19 @@ dcleanup(){
 }
 
 export -f dcleanup
+
+run_sqlline() {
+  query=$1
+
+  JDBC_URL=${JDBC_URL:-$(lpass show "Shared-PKS Telemetry/JDBC Telemetry" --notes)}
+  JDBC_USERNAME=${JDBC_USERNAME:-$(lpass show "Shared-PKS Telemetry/JDBC Telemetry" --username)}
+  JDBC_PASSWORD=${JDBC_PASSWORD:-$(lpass show "Shared-PKS Telemetry/JDBC Telemetry" --password)}
+
+  java -cp ".:$HOME/workspace/pkst-home/bin/*" sqlline.SqlLine \
+	  -u $JDBC_URL \
+	  -n $JDBC_USERNAME -p $JDBC_PASSWORD \
+	  --fastConnect=true --incremental=true --isolation=TRANSACTION_READ_UNCOMMITTED --outputformat=json \
+	  -e "${query}"
+}
+
+export -f run_sqlline
