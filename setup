@@ -36,6 +36,7 @@ fi
 
 ln -sf ~/workspace/pkst-home/plug.vim ~/.config/nvim/user/plug.vim
 ln -sf ~/workspace/pkst-home/after.vim ~/.config/nvim/user/after.vim
+ln -sf ~/workspace/pkst-home/before.vim ~/.config/nvim/user/before.vim
 
 ln -sf ~/workspace/pkst-home/tmux.conf ~/.tmux.conf
 if [[ ! -e ~/.tmux/plugins/tpm ]]; then
