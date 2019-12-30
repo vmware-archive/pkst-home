@@ -47,3 +47,15 @@ run_sqlline() {
 }
 
 export -f run_sqlline
+
+credhub_login() {
+  : "${BOSH_ENVIRONMENT:?Variable not set}"
+  : "${BOSH_CA_CERT:?Variable not set}"
+  : "${BOSH_CLIENT:?Variable not set}"
+  : "${BOSH_CLIENT_SECRET:?Variable not set}"
+
+  credhub api https://$BOSH_ENVIRONMENT:8844 --ca-cert $BOSH_CA_CERT
+  credhub login --client-name $BOSH_CLIENT --client-secret $BOSH_CLIENT_SECRET
+}
+
+export -f credhub_login
