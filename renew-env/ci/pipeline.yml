@@ -35,7 +35,7 @@ jobs:
     trigger: true
   - get: git-pkst-home
   - task: renew
-    tags: [pks-telemetry-vsphere]
+    tags: [toolsmiths-shared-vsphere]
     privileged: true
     config:
       platform: linux
