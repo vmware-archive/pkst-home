@@ -6,6 +6,7 @@ set -euo pipefail
 # https://stackoverflow.com/questions/59895/getting-the-source-directory-of-a-bash-script-from-within
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CONF="${DIR}/conf"
+BIN="${DIR}/bin"
 
 update_brew_and_packages() {
   echo "Updating brew and packages..."
@@ -44,6 +45,16 @@ setup_git() {
   touch ${HOME}/.gitmessage
 }
 setup_git
+
+clone_repos() {
+  source ${BIN}/clone_repos
+}
+clone_repos
+
+install_ruby(){
+  source ${BIN}/install_ruby
+}
+install_ruby
 
 setup_nvim() {
   echo "Setting up nvim..."
@@ -124,13 +135,10 @@ update_gcloud_components() {
   if gcloud info &> /dev/null; then
     echo "Updating gcloud components..."
     gcloud components update --quiet
+    gcloud compute config-ssh --ssh-config-file ${HOME}/.ssh/gcloud_ssh_config
   fi
 }
 
 ln -sf ${DIR}/ssh_config ${HOME}/.ssh/config
-gcloud compute config-ssh --ssh-config-file ${HOME}/.ssh/gcloud_ssh_config
-
-source ${DIR}/bin/clone_repo
-source ${DIR}/bin/install_ruby
 
 echo "Setup successful!"
