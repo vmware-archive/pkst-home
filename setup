@@ -2,10 +2,12 @@
 
 set -euo pipefail
 
+# Directories
 # https://stackoverflow.com/questions/59895/getting-the-source-directory-of-a-bash-script-from-within
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CONF="${DIR}/conf"
 
-ln -sf ~/workspace/pkst-home/Brewfile ~/Brewfile
+ln -sf ${DIR}/Brewfile ${HOME}/Brewfile
 brew update
 brew bundle
 brew upgrade
@@ -14,34 +16,35 @@ brew cleanup
 
 pip3 install neovim
 
-if [[ ! -e ~/.config/nvim ]]; then
-  git clone https://github.com/luan/nvim.git ~/.config/nvim
+if [[ ! -e ${HOME}/.config/nvim ]]; then
+  git clone https://github.com/luan/nvim.git ${HOME}/.config/nvim
 fi
 
-ln -sf ~/workspace/pkst-home/profile ~/.profile
-ln -sf ~/workspace/pkst-home/git-authors ~/.git-authors
-ln -sf ~/workspace/pkst-home/git-together ~/.git-together
-ln -sf ~/workspace/pkst-home/gitconfig ~/.gitconfig
+ln -sf ${CONF}/profile ${HOME}/.profile
+ln -sf ${CONF}/bash_aliases ${HOME}/.bash_aliases
+ln -sf ${CONF}/git-authors ${HOME}/.git-authors
+ln -sf ${CONF}/git-together ${HOME}/.git-together
+ln -sf ${CONF}/gitconfig ${HOME}/.gitconfig
 find ${DIR} -name '.*' -type f -depth 1 | grep -v .DS_Store | xargs -I % ln -sf % $HOME
 
-touch ~/.gitmessage
+touch ${HOME}/.gitmessage
 
-mkdir -p ~/.config/nvim/user
-if [[ -e ~/.config/nvim/user/plug.vim ]]; then
-  rm ~/.config/nvim/user/plug.vim
+mkdir -p ${HOME}/.config/nvim/user
+if [[ -e ${HOME}/.config/nvim/user/plug.vim ]]; then
+  rm ${HOME}/.config/nvim/user/plug.vim
 fi
-if [[ -e ~/.config/nvim/user/after.vim ]]; then
-  rm ~/.config/nvim/user/after.vim
+if [[ -e ${HOME}/.config/nvim/user/after.vim ]]; then
+  rm ${HOME}/.config/nvim/user/after.vim
 fi
 
-ln -sf ~/workspace/pkst-home/plug.vim ~/.config/nvim/user/plug.vim
-ln -sf ~/workspace/pkst-home/after.vim ~/.config/nvim/user/after.vim
-ln -sf ~/workspace/pkst-home/before.vim ~/.config/nvim/user/before.vim
+ln -sf ${CONF}/plug.vim ${HOME}/.config/nvim/user/plug.vim
+ln -sf ${CONF}/after.vim ${HOME}/.config/nvim/user/after.vim
+ln -sf ${CONF}/before.vim ${HOME}/.config/nvim/user/before.vim
 
-ln -sf ~/workspace/pkst-home/tmux.conf ~/.tmux.conf
-if [[ ! -e ~/.tmux/plugins/tpm ]]; then
-  mkdir -p ~/.tmux/plugins/tpm
-  git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+ln -sf ${CONF}/tmux.conf ${HOME}/.tmux.conf
+if [[ ! -e ${HOME}/.tmux/plugins/tpm ]]; then
+  mkdir -p ${HOME}/.tmux/plugins/tpm
+  git clone https://github.com/tmux-plugins/tpm ${HOME}/.tmux/plugins/tpm
 fi
 
 if [[ ! -e ~/workspace/git-hooks-core ]]; then
@@ -77,8 +80,8 @@ if [ ! -f /usr/local/bin/om ]; then
   chmod 0755 /usr/local/bin/om
 fi
 
-ln -sf ~/workspace/pkst-home/ssh_config ~/.ssh/config
-gcloud compute config-ssh --ssh-config-file ~/.ssh/gcloud_ssh_config
+ln -sf ${DIR}/ssh_config ${HOME}/.ssh/config
+gcloud compute config-ssh --ssh-config-file ${HOME}/.ssh/gcloud_ssh_config
 
 source ${DIR}/bin/clone_repo
 source ${DIR}/bin/install_ruby
