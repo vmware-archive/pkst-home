@@ -7,45 +7,69 @@ set -euo pipefail
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CONF="${DIR}/conf"
 
-ln -sf ${DIR}/Brewfile ${HOME}/Brewfile
-brew update
-brew bundle
-brew upgrade
-brew cask outdated --quiet | xargs -I % brew cask reinstall %
-brew cleanup
+update_brew_and_packages() {
+  echo "Updating brew and packages..."
+  ln -sf ${DIR}/Brewfile ${HOME}/Brewfile
+  brew update
+  brew bundle
+  brew upgrade
+  brew cask outdated --quiet | xargs -I % brew cask reinstall %
+  brew cleanup
+}
+update_brew_and_packages
 
-pip3 install neovim
+install_nvim() {
+  echo "Installing nvim..."
+  pip3 install neovim
 
-if [[ ! -e ${HOME}/.config/nvim ]]; then
-  git clone https://github.com/luan/nvim.git ${HOME}/.config/nvim
-fi
+  if [[ ! -e ${HOME}/.config/nvim ]]; then
+    git clone https://github.com/luan/nvim.git ${HOME}/.config/nvim
+  fi
+}
+install_nvim
 
-ln -sf ${CONF}/profile ${HOME}/.profile
-ln -sf ${CONF}/bash_aliases ${HOME}/.bash_aliases
-ln -sf ${CONF}/git-authors ${HOME}/.git-authors
-ln -sf ${CONF}/git-together ${HOME}/.git-together
-ln -sf ${CONF}/gitconfig ${HOME}/.gitconfig
-find ${DIR} -name '.*' -type f -depth 1 | grep -v .DS_Store | xargs -I % ln -sf % $HOME
+bash_setup() {
+  echo "Setting up bash..."
+  ln -sf ${CONF}/profile ${HOME}/.profile
+  ln -sf ${CONF}/bash_aliases ${HOME}/.bash_aliases
+}
+bash_setup
 
-touch ${HOME}/.gitmessage
+setup_git() {
+  echo "Setting up git..."
+  ln -sf ${CONF}/git-authors ${HOME}/.git-authors
+  ln -sf ${CONF}/git-together ${HOME}/.git-together
+  ln -sf ${CONF}/gitconfig ${HOME}/.gitconfig
+  find ${DIR} -name '.*' -type f -depth 1 | grep -v .DS_Store | xargs -I % ln -sf % $HOME
+  touch ${HOME}/.gitmessage
+}
+setup_git
 
-mkdir -p ${HOME}/.config/nvim/user
-if [[ -e ${HOME}/.config/nvim/user/plug.vim ]]; then
-  rm ${HOME}/.config/nvim/user/plug.vim
-fi
-if [[ -e ${HOME}/.config/nvim/user/after.vim ]]; then
-  rm ${HOME}/.config/nvim/user/after.vim
-fi
+setup_nvim() {
+  echo "Setting up nvim..."
+  mkdir -p ${HOME}/.config/nvim/user
+  if [[ -e ${HOME}/.config/nvim/user/plug.vim ]]; then
+    rm ${HOME}/.config/nvim/user/plug.vim
+  fi
+  if [[ -e ${HOME}/.config/nvim/user/after.vim ]]; then
+    rm ${HOME}/.config/nvim/user/after.vim
+  fi
 
-ln -sf ${CONF}/plug.vim ${HOME}/.config/nvim/user/plug.vim
-ln -sf ${CONF}/after.vim ${HOME}/.config/nvim/user/after.vim
-ln -sf ${CONF}/before.vim ${HOME}/.config/nvim/user/before.vim
+  ln -sf ${CONF}/plug.vim ${HOME}/.config/nvim/user/plug.vim
+  ln -sf ${CONF}/after.vim ${HOME}/.config/nvim/user/after.vim
+  ln -sf ${CONF}/before.vim ${HOME}/.config/nvim/user/before.vim
+}
+setup_nvim
 
-ln -sf ${CONF}/tmux.conf ${HOME}/.tmux.conf
-if [[ ! -e ${HOME}/.tmux/plugins/tpm ]]; then
-  mkdir -p ${HOME}/.tmux/plugins/tpm
-  git clone https://github.com/tmux-plugins/tpm ${HOME}/.tmux/plugins/tpm
-fi
+setup_tmux() {
+  echo "Setting up tmux..."
+  ln -sf ${CONF}/tmux.conf ${HOME}/.tmux.conf
+  if [[ ! -e ${HOME}/.tmux/plugins/tpm ]]; then
+    mkdir -p ${HOME}/.tmux/plugins/tpm
+    git clone https://github.com/tmux-plugins/tpm ${HOME}/.tmux/plugins/tpm
+  fi
+}
+setup_tmux
 
 if [[ ! -e ~/workspace/git-hooks-core ]]; then
   git clone https://github.com/pivotal-cf/git-hooks-core.git ~/workspace/git-hooks-core
@@ -55,30 +79,53 @@ pushd ~/workspace/git-hooks-core > /dev/null
   git pull
 popd
 
-if [ ! -f /usr/local/bin/cred-alert-cli ]; then
-	os_name=$(uname | awk '{print tolower($1)}')
-	curl -o cred-alert-cli \
-	"https://s3.amazonaws.com/cred-alert/cli/current-release/cred-alert-cli_${os_name}"
-	chmod 755 cred-alert-cli
-	mv cred-alert-cli /usr/local/bin
-fi
+setup_cred_alert(){
+  echo "Setting up cred alert..."
+  if [ ! -f /usr/local/bin/cred-alert-cli ]; then
+    os_name=$(uname | awk '{print tolower($1)}')
+    curl -o cred-alert-cli \
+    "https://s3.amazonaws.com/cred-alert/cli/current-release/cred-alert-cli_${os_name}"
+    chmod 755 cred-alert-cli
+    mv cred-alert-cli /usr/local/bin
+  fi
+}
+setup_cred_alert
 
-# Update all default gems
-gem update --system
-gem update
-gem cleanup
+update_gems() {
+  echo "Updating default ruby gems..."
+  # Update all default gems
+  gem update --system
+  gem update
+  gem cleanup
+}
+update_gems
 
-# Install kiln
-if [ ! -f /usr/local/bin/kiln ]; then
-  curl -SL -o /usr/local/bin/kiln https://github.com/pivotal-cf/kiln/releases/download/0.21.0/kiln-darwin
-  chmod 0755 /usr/local/bin/kiln
-fi
+install_kiln() {
+  echo "Installing kiln..."
+  # Install kiln
+  if [ ! -f /usr/local/bin/kiln ]; then
+    curl -SL -o /usr/local/bin/kiln https://github.com/pivotal-cf/kiln/releases/download/0.21.0/kiln-darwin
+    chmod 0755 /usr/local/bin/kiln
+  fi
+}
+install_kiln
 
-# Install om
-if [ ! -f /usr/local/bin/om ]; then
-  curl -SL -o /usr/local/bin/om https://github.com/pivotal-cf/om/releases/download/0.42.0/om-darwin
-  chmod 0755 /usr/local/bin/om
-fi
+install_om() {
+  echo "Installing Om CLI..."
+  # Install om
+  if [ ! -f /usr/local/bin/om ]; then
+    curl -SL -o /usr/local/bin/om https://github.com/pivotal-cf/om/releases/download/0.42.0/om-darwin
+    chmod 0755 /usr/local/bin/om
+  fi
+}
+install_om
+
+update_gcloud_components() {
+  if gcloud info &> /dev/null; then
+    echo "Updating gcloud components..."
+    gcloud components update --quiet
+  fi
+}
 
 ln -sf ${DIR}/ssh_config ${HOME}/.ssh/config
 gcloud compute config-ssh --ssh-config-file ${HOME}/.ssh/gcloud_ssh_config
