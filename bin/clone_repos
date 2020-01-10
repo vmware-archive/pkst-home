@@ -2,7 +2,7 @@
 function clone_repos() {
   echo "Cloning commonly used repos..."
   local pivotal_cf_dir="${HOME}/workspace"
-  repos=(p-pks-integrations pks-api-release pks-locks pks-releng-ci raas-secrets pks-telemetry-release vac-csv-importer csv-exporter)
+  repos=(p-pks-integrations pks-api-release pks-locks pks-releng-ci raas-secrets pks-telemetry-release pks-telemetry-vac-transfer)
 
   for repo in ${repos[@]}; do
     echo -e "\ncloning $repo..."
