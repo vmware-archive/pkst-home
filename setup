@@ -38,13 +38,24 @@ bash_setup
 
 setup_git() {
   echo "Setting up git..."
+  write_git_config_header
   ln -sf ${CONF}/git-authors ${HOME}/.git-authors
   ln -sf ${CONF}/git-together ${HOME}/.git-together
-  ln -sf ${CONF}/gitconfig ${HOME}/.gitconfig
+  ln -svnf ${CONF}/custom-gitconfig $HOME/.custom-gitconfig
   find ${DIR} -name '.*' -type f -depth 1 | grep -v .DS_Store | xargs -I % ln -sf % $HOME
   touch ${HOME}/.gitmessage
 }
 setup_git
+
+write_git_config_header() {
+    cat << EOF > "$HOME/.gitconfig"
+[include]
+  path=${HOME}/.git-together
+  path=${HOME}/.custom-gitconfig
+[commit]
+	template = ~/.git-author-template
+EOF
+}
 
 clone_repos() {
   source ${BIN}/clone_repos

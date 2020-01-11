@@ -1,5 +1,0 @@
-[include]
-  path = ~/workspace/pkst-home/custom-gitconfig
-  path = ~/workspace/pkst-home/git-together
-[commit]
-	template = ~/.git-author-template
