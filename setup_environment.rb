@@ -119,8 +119,8 @@ services_subnet = networks_list.find { |n| n[:name] == target_network_name }
 pipeline_vars['azs'] = services_subnet[:subnets].first[:availability_zone_names]
 
 
-telemetry_test_certs = YAML.load_file(File.join(__dir__, 'telemetry-test-certs.yml'))
-pipeline_vars['telemetry_forward_tls'] = telemetry_test_certs
+telemetry_test_certs = YAML.load_file(File.join(__dir__, 'telemetry-test-certs-new.yml'))
+pipeline_vars['telemetry_tls'] = telemetry_test_certs
 
 puts 'Writing pipeline-vars.yml'
 File.write("#{env_dir}/pipeline-vars.yml", YAML.dump(pipeline_vars))
